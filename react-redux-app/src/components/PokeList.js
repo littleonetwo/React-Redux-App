@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import { getPokemon } from '../actions';
+import { getPokemon, selectPokemon} from '../actions';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
+
+
 const PokemonList = props => {
   // const fetchPokemon = e => {
   //   e.preventDefault();
@@ -15,7 +18,13 @@ const PokemonList = props => {
   const [currentSel, setCurrentSel] = useState("");
   const toggle = (id) => {
     // console.log(id);
-    setCurrentSel(id);
+
+    if(!modal){
+      props.selectPokemon(id);
+      setCurrentSel(id);
+      // console.log("select props:", props.curSel)
+      // setCurrentSel(props.curSel)
+    }
     setModal(!modal);
 
 
@@ -28,15 +37,16 @@ const PokemonList = props => {
       <div>
         {props.pokemon.map(pokemon => (
           <div>
-            <Button key={pokemon.url} color="info" onClick={()=>toggle(pokemon.name)}>{pokemon.name}</Button>
+            <Button key={pokemon.url} color="info" onClick={()=>toggle(pokemon)}>{pokemon.name}</Button>
 
             <br /><br />
           </div>
         ))}
         <Modal isOpen={modal} toggle={()=>toggle()} className={className}>
-          <ModalHeader toggle={()=>toggle()} charCode="x">{currentSel}</ModalHeader>
+          <ModalHeader toggle={()=>toggle()} charCode="x">{currentSel.name}</ModalHeader>
           <ModalBody>
-            info and stuff
+            Type:
+
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={()=>toggle()}>Got It!</Button>
@@ -54,5 +64,5 @@ const PokemonList = props => {
 
 
 export default connect((state) => {
-   return {pokemon: state.pokemon, error:state.error, isFetching: state.isFetching}},
-  { getPokemon:getPokemon })(PokemonList);
+   return {pokemon: state.pokemon, error:state.error, isFetching: state.isFetching, curSel: state.curSel}},
+  { getPokemon, selectPokemon })(PokemonList);
